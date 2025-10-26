@@ -1,0 +1,107 @@
+
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>班表產生器（手動設定版）</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>工作班表（手動設定）</h1>
+    <p class="sub">自行定義班別 → 在月曆點選日期編輯 → 匯出 PNG / ICS</p>
+  </header>
+
+  <section class="controls">
+    <div class="control">
+      <label>月份：<input id="monthInput" type="month" /></label>
+      <button id="newMonthBtn" title="清空本月資料">清空本月</button>
+      <button id="saveBtn">儲存</button>
+      <span class="muted" id="autosaveHint">（自動儲存開啟）</span>
+    </div>
+
+    <details class="control" open>
+      <summary>🛠️ 班別管理（新增 / 編輯 / 刪除）</summary>
+      <div id="shiftList" class="shift-list"></div>
+      <div class="shift-editor">
+        <input id="sCode" placeholder="代碼（如：早）" maxlength="4">
+        <input id="sLabel" placeholder="顯示名稱（可空）" maxlength="8">
+        <input id="sColor" type="color" value="#4CAF50" title="顏色">
+        <label>自 <input id="sStart" type="time" value="07:00"></label>
+        <label>至 <input id="sEnd" type="time" value="15:00"></label>
+        <label class="inline"><input id="sOver" type="checkbox"> 跨日</label>
+        <label class="inline"><input id="sOff" type="checkbox"> 休</label>
+        <input id="sNote" placeholder="備註（可空）" maxlength="20">
+        <button id="addShiftBtn">新增/更新班別</button>
+      </div>
+    </details>
+
+    <div class="spacer"></div>
+
+    <div class="control">
+      <button id="exportPNGBtn">匯出 PNG</button>
+      <button id="exportICSBtn">匯出 ICS（行事曆）</button>
+    </div>
+  </section>
+
+  <main>
+    <div id="calendarWrapper">
+      <div class="calendar-header">
+        <h2 id="calTitle">—</h2>
+      </div>
+      <div class="dow-row">
+        <div>週日</div><div>週一</div><div>週二</div><div>週三</div><div>週四</div><div>週五</div><div>週六</div>
+      </div>
+      <div id="calendar" class="calendar-grid" aria-label="calendar grid"></div>
+    </div>
+  </main>
+
+  <aside id="dayEditor" class="sheet hidden" role="dialog" aria-modal="true">
+    <div class="sheet-header">
+      <strong id="sheetDate">—</strong>
+      <div class="sheet-actions">
+        <button id="copyDayBtn" title="複製今天設定">複製</button>
+        <button id="pasteDayBtn" title="貼上到今天">貼上</button>
+        <button id="closeSheetBtn">關閉</button>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div class="row">
+        <select id="addFromShift"></select>
+        <button id="addShiftToDayBtn">加入</button>
+        <span class="muted">或直接輸入代碼：</span>
+        <input id="freeCode" placeholder="例如：早、午、夜、動…">
+        <button id="addFreeCodeBtn">加入代碼</button>
+      </div>
+      <div class="row">
+        <ul id="dayShiftList" class="chip-list"></ul>
+      </div>
+      <hr/>
+      <details>
+        <summary>快速套用到其他日期</summary>
+        <div class="row wrap">
+          <button class="ghost" data-apply="weekday">所有工作日（週一～週五）</button>
+          <button class="ghost" data-apply="weekend">所有週末（週六～週日）</button>
+          <button class="ghost" data-apply="sameDow">同星期幾</button>
+        </div>
+        <div class="row">
+          <label>日期範圍：
+            <input id="rangeStart" type="number" min="1" max="31" placeholder="起日" style="width:80px;">
+            －
+            <input id="rangeEnd" type="number" min="1" max="31" placeholder="迄日" style="width:80px;">
+          </label>
+          <button id="applyRangeBtn">套用</button>
+        </div>
+      </details>
+    </div>
+  </aside>
+
+  <footer>
+    <small>所有資料僅儲存在本機（LocalStorage）。© 2025</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
